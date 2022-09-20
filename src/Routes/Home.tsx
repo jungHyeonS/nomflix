@@ -5,6 +5,7 @@ import { makeImagePath } from "../utils";
 import { motion,AnimatePresence, useScroll } from "framer-motion";
 import { useState } from "react";
 import { useMatch, useNavigate } from "react-router-dom";
+import Banner from "../Components/Banner";
 
 const Wrapper = styled.div`
     background-color: black;
@@ -15,26 +16,6 @@ const Loader = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-`
-
-const Banner = styled.div<{bgPhoto:string}>`
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content:center;
-    padding: 60px;
-    background-image: linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,1)), url(${(props)=>props.bgPhoto});
-    background-size: cover;
-`
-
-const Title = styled.h2`
-    font-size: 68px;
-    margin-bottom: 20px;
-`
-
-const Overview = styled.p`
-    font-size: 26px;
-    width: 50%;
 `
 
 const Slider = styled.div`
@@ -230,7 +211,6 @@ function Home(){
     const [isHover,setIsHover] = useState(0);
     const incraseIndex = () => {
         if(data){
-            
             if(leaving) return ;
             setBack(false);
             toggleLevaing();
@@ -266,10 +246,7 @@ function Home(){
             {
                 isLoading? <Loader>Loading...</Loader> : 
                 <>
-                    <Banner  bgPhoto={makeImagePath(data?.results[0].backdrop_path || "")}>
-                        <Title>{data?.results[0].title}</Title>
-                        <Overview>{data?.results[0].overview}</Overview>
-                    </Banner>
+                    <Banner data={data}></Banner>
                     <Slider onMouseOver={() => setIsHover(1)} onMouseOut={() => setIsHover(0)}>
                         {isHover ? (
                             <>
