@@ -42,6 +42,36 @@ const Slider = styled.div`
     top: -100px;
 `
 
+const ArrowLeft = styled(motion.div)`
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 50px;
+    height: 200px;
+    background: rgba(0,0,0,0.7);
+    z-index: 80;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 1s ease-in-out;
+`
+
+const ArrowRight = styled(motion.div)`
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 50px;
+    height: 200px;
+    background: rgba(0,0,0,0.7);
+    z-index: 80;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 1s ease-in-out;
+`
+
 const Row = styled(motion.div)`
     display: grid;
     gap: 5px;
@@ -125,15 +155,16 @@ const BigOverview = styled.p`
 `
 
 const rowVariants = {
-    hidden : {
-        x : window.outerWidth + 5
-    },
+    hidden : (back:boolean) => ({
+        x : back ? -window.outerWidth - 5 :window.outerWidth+ 5
+    }),
     visible : {
         x : 0
     },
-    exit : {
-        x : -window.outerWidth - 5
-    }
+    exit : (back:boolean) => (
+        {
+        x : back? window.outerWidth + 5 : -window.outerWidth - 5
+    })
 }
 
 const boxVariants = {
@@ -143,8 +174,9 @@ const boxVariants = {
     hover : {
         scale:1.3,
         y:-50,
-        transiion:{
-            delay : 0.5,
+        zIndex:99,
+        transition:{
+            delay:0.5,
             duration:0.3,
             type:"tween"
         }
@@ -156,11 +188,31 @@ const boxVariants = {
 const infoVariants = {
     hover : {
         opacity : 1,
-        transiion:{
+        transition:{
             delay : 0.5,
             duration:0.3,
             type:"tween"
         }
+    }
+}
+
+const arrowVariants = {
+    hidden : {
+        opacity : 0,   
+    },
+    visible:{
+        opacity : 1, 
+        transition:{
+            duration : 0.1,
+            type:"tween"
+        } 
+    },
+    exit:{
+        opacity : 0,  
+        transition:{
+            duration : 0.1,
+            type:"tween"
+        }  
     }
 }
 
@@ -174,9 +226,13 @@ function Home(){
     
 
     const [index,setIndex] = useState(0);
+    const [back,setBack] = useState(false)
+    const [isHover,setIsHover] = useState(0);
     const incraseIndex = () => {
         if(data){
+            
             if(leaving) return ;
+            setBack(false);
             toggleLevaing();
             const totalMovies = data.results.length;
             const maxIndex = Math.floor(totalMovies / offset) - 1;
@@ -184,6 +240,18 @@ function Home(){
         }
         
     };
+    const unincraseIndex = () => {
+        if(data){
+            if(leaving) return ;
+            setBack(true);
+            toggleLevaing();
+            setIndex((prev) => prev -1)
+            console.log("unincrease");
+        }
+    }
+    
+
+
     const [leaving,setLeaving] = useState(false);
     const toggleLevaing = () => setLeaving(prev => !prev)
     const onBoxCliced = (movieId:number) => {
@@ -198,16 +266,36 @@ function Home(){
             {
                 isLoading? <Loader>Loading...</Loader> : 
                 <>
-                    <Banner onClick={incraseIndex} bgPhoto={makeImagePath(data?.results[0].backdrop_path || "")}>
+                    <Banner  bgPhoto={makeImagePath(data?.results[0].backdrop_path || "")}>
                         <Title>{data?.results[0].title}</Title>
                         <Overview>{data?.results[0].overview}</Overview>
                     </Banner>
-                    <Slider>
+                    <Slider onMouseOver={() => setIsHover(1)} onMouseOut={() => setIsHover(0)}>
+                        {isHover ? (
+                            <>
+                                <ArrowLeft 
+                                variants={arrowVariants}
+                                initial="hidden"
+                                animate="visible"
+                                exit="exit"
+                                onClick={unincraseIndex}>&lt;</ArrowLeft>
+                                <ArrowRight 
+                                variants={arrowVariants}
+                                initial="hidden"
+                                animate="visible"
+                                exit="exit"
+                                onClick={incraseIndex}>&gt;</ArrowRight>
+                            </>
+                        ) : null}
+                        
+                        
                         <AnimatePresence 
                         initial={false}
+                        custom={back}
                         onExitComplete={toggleLevaing}>
                             <Row 
                             variants={rowVariants} 
+                            custom={back}
                             initial="hidden" 
                             animate="visible" 
                             transition={{type:"tween",duration:0.5}}
@@ -215,8 +303,8 @@ function Home(){
                                 {data?.results.slice(1).slice(offset*index,offset*index + offset).map((movie) => (
                                     <Box 
                                     onClick={() => onBoxCliced(movie.id)}
-                                    variants={boxVariants}
                                     key={movie.id} 
+                                    variants={boxVariants}
                                     initial="normal"
                                     whileHover="hover"
                                     transition={{type:"tween"}}
