@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
 import styled from "styled-components";
-import { getMovies, IGetMoviesResult } from "../api";
+import { getMovies, IGetMoviesResult,getTopMovies } from "../api";
 import { makeImagePath } from "../utils";
 import { motion,AnimatePresence, useScroll } from "framer-motion";
 import { useState } from "react";
@@ -62,6 +62,21 @@ const BigOverview = styled.p`
     top: -60px;
 `
 
+
+const MovieList =  styled.div`
+    width: 100%;
+    height: 200px;
+    margin-top: 200px;
+    margin-bottom: 200px;
+`
+
+const Category = styled.h2`
+    position: relative;
+    top: -120px;
+    font-size: 28px;
+    padding-left: 20px;
+`
+
 const rowVariants = {
     hidden : (back:boolean) => ({
         x : back ? -window.outerWidth - 5 :window.outerWidth+ 5
@@ -81,6 +96,10 @@ function Home(){
     const bigMovieMath = useMatch("/movies/:id")
     const {scrollY} = useScroll()
     const {data,isLoading} = useQuery<IGetMoviesResult>(["movies","nowPlaying"],getMovies);
+    const top = useQuery<IGetMoviesResult>(["movies","topMovies"],getTopMovies)
+    // console.log(top);
+    const topList = top.data;
+    console.log(topList);
     
     const onOverlayClick = () => {
         navigate("/");
@@ -92,7 +111,17 @@ function Home(){
                 isLoading? <Loader>Loading...</Loader> : 
                 <>
                     <Banner data={data}></Banner>
-                    <Slide data={data}></Slide>
+                    <MovieList>
+                        <Category>Top Movies</Category>
+                        <Slide data={topList}></Slide>
+                    </MovieList>
+
+                    <MovieList>
+                        <Category>Movies</Category>
+                        <Slide data={data}></Slide>
+                    </MovieList>
+                    
+                    {/* <Slide data={data}></Slide> */}
                     <AnimatePresence>
                            {bigMovieMath ? (
                              <>

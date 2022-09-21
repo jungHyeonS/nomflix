@@ -151,6 +151,9 @@ interface IBanner{
 const offset = 6;
 
 function Slide(props : IBanner){
+    console.log("slide");
+    console.log(props.data);
+
     const navigate = useNavigate();
     const [index,setIndex] = useState(0);
     const [back,setBack] = useState(false)
