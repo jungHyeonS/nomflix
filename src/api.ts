@@ -62,6 +62,10 @@ export function getCredits(id:Number){
     return fetch(`${BASE_PATH}/movie/${id}/credits?api_key=${API_KEY}&language=en-US`).then((response) => response.json())
 }
 
+export function getUpComming(){
+    return fetch(`${BASE_PATH}/movie/upcoming?api_key=${API_KEY}&language=en-US&page=1`).then((response) => response.json())
+}
+
 export function getTvShow(){
     return fetch(`${BASE_PATH}tv/popular?api_key=${API_KEY}&language=en-US&page=1`).then((response) => response.json())
 }

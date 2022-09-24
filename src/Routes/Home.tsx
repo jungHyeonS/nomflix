@@ -1,6 +1,6 @@
 import { useQuery} from "react-query";
 import styled from "styled-components";
-import { getMovies, IGetMoviesResult,getTopMovies,getTvShow, getMoviesDetail, IGetMovieDetail, getCredits, IGetCredit } from "../api";
+import { getMovies, IGetMoviesResult,getTopMovies,getTvShow, getMoviesDetail, IGetMovieDetail, getCredits, IGetCredit,getUpComming } from "../api";
 import { makeImagePath } from "../utils";
 import { motion,AnimatePresence, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -135,7 +135,9 @@ function Home(){
     const {scrollY} = useScroll()
     const {data,isLoading} = useQuery<IGetMoviesResult>(["movies","nowPlaying"],getMovies);
     const top = useQuery<IGetMoviesResult>(["movies","topMovies"],getTopMovies)
+    const upComming = useQuery<IGetMoviesResult>(["movies","upComming"],getUpComming)
     const topList = top.data;
+    const upList = upComming.data;
     
     const detail = useQuery<IGetMovieDetail>(
         ["movies",bigMovieMath?.params.id],
@@ -147,8 +149,6 @@ function Home(){
         () => getCredits(Number(bigMovieMath?.params.id)),
         {enabled : !!bigMovieMath?.params.id}
     )
-    // console.log(credits.data?.cast[0]);
-    // console.log(detail.data?.backdrop_path);
     const onOverlayClick = () => {
         navigate("/");
     }
@@ -167,6 +167,11 @@ function Home(){
                     <MovieList>
                         <Category>Movies</Category>
                         <Slide data={data}></Slide>
+                    </MovieList>
+
+                    <MovieList>
+                        <Category>Up Comming</Category>
+                        <Slide data={upList}></Slide>
                     </MovieList>
                     
                     {/* <Slide data={data}></Slide> */}
