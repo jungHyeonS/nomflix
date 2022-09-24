@@ -18,7 +18,6 @@ const BannerCon = styled.div`
     left: 0;
     top: 0;
     z-index: 0;
-    background-color:  linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,1));
    }
 `
 const BannerCover = styled.div`
@@ -28,6 +27,7 @@ const BannerCover = styled.div`
     left: 0;
     top: 0;
     z-index: 99;
+    background:  linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.5));;
 `
 
 const Title = styled.h2`

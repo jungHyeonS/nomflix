@@ -1,6 +1,6 @@
 import { useQuery} from "react-query";
 import styled from "styled-components";
-import { getMovies, IGetMoviesResult,getTopMovies,getTvShow, getMoviesDetail, IGetMovieDetail, getCredits, IGetCredit,getUpComming } from "../api";
+import { getMovies, IGetMoviesResult,getTopMovies,getTvShow, getMoviesDetail, IGetMovieDetail, getCredits, IGetCredit,getUpComming, getMoveSimiar } from "../api";
 import { makeImagePath } from "../utils";
 import { motion,AnimatePresence, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -27,6 +27,7 @@ const Overlay = styled(motion.div)`
     height: 100%;
     background-color: rgba(0,0,0,0.5);
     opacity: 0;
+    z-index: 200;
 `
 
 const BigMovie = styled(motion.div)`
@@ -39,6 +40,7 @@ const BigMovie = styled(motion.div)`
     border-radius: 15px;
     overflow-y: scroll;
     margin:0 auto;
+    z-index: 201;
 `
 
 const BigCover = styled.div`
@@ -149,6 +151,14 @@ function Home(){
         () => getCredits(Number(bigMovieMath?.params.id)),
         {enabled : !!bigMovieMath?.params.id}
     )
+
+    const slimiar = useQuery(
+        ["movies","getSlimiar"],
+        () => getMoveSimiar(Number(bigMovieMath?.params.id)),
+        {enabled : !!bigMovieMath?.params.id}
+    )
+    console.log(slimiar)
+
     const onOverlayClick = () => {
         navigate("/");
     }
