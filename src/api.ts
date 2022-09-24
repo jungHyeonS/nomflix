@@ -69,3 +69,7 @@ export function getUpComming(){
 export function getTvShow(){
     return fetch(`${BASE_PATH}tv/popular?api_key=${API_KEY}&language=en-US&page=1`).then((response) => response.json())
 }
+
+export function getMovieVideo(id : number){
+    return fetch(`${BASE_PATH}/3/movie/${id}/videos?api_key=${API_KEY}&language=en-US`).then((response) => response.json())
+}
