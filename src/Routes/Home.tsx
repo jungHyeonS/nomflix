@@ -1,9 +1,9 @@
-import { useQuery } from "react-query";
+import { useQuery} from "react-query";
 import styled from "styled-components";
-import { getMovies, IGetMoviesResult,getTopMovies,getTvShow } from "../api";
+import { getMovies, IGetMoviesResult,getTopMovies,getTvShow, getMoviesDetail, IGetMovieDetail } from "../api";
 import { makeImagePath } from "../utils";
 import { motion,AnimatePresence, useScroll } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMatch, useNavigate } from "react-router-dom";
 import Banner from "../Components/Banner";
 import Slide from "../Components/Slide";
@@ -99,12 +99,12 @@ function Home(){
     const top = useQuery<IGetMoviesResult>(["movies","topMovies"],getTopMovies)
     const topList = top.data;
     
-    const tv = useQuery<IGetMoviesResult>(["movies","topMovies"],getTvShow)
+    const detail = useQuery<IGetMovieDetail>(["movies",bigMovieMath?.params.id],() => getMoviesDetail(Number(bigMovieMath?.params.id)),{enabled:!!bigMovieMath?.params.id})
+    // console.log(detail.data?.backdrop_path);
     const onOverlayClick = () => {
         navigate("/");
     }
-
-    const clickedMovie = bigMovieMath?.params.id && data?.results.find(movie => movie.id+"" === bigMovieMath.params.id)
+    // const clickedMovie = bigMovieMath?.params.id && data?.results.find(movie => movie.id+"" === bigMovieMath.params.id)
     return (
         <Wrapper style={{height:"200vh"}}>
             {
@@ -131,13 +131,13 @@ function Home(){
                                 style={{
                                     top:scrollY.get() + 100
                                 }}>
-                                    {clickedMovie && 
+                                    {bigMovieMath?.params.id && 
                                     <>
                                         <BigCover style={{backgroundImage : `
                                         linear-gradient(to top,black,transparent),
-                                        url(${makeImagePath(clickedMovie.backdrop_path,"w500")})`}}/>
-                                        <BigTitle>{clickedMovie.title}</BigTitle>
-                                        <BigOverview>{clickedMovie.overview}</BigOverview>
+                                        url(${makeImagePath(detail.data?.backdrop_path || "","w500")})`}}/>
+                                        <BigTitle>{detail.data?.title}</BigTitle>
+                                        <BigOverview>{detail.data?.overview}</BigOverview>
                                     </>}
                                 </BigMovie>
                              </>
