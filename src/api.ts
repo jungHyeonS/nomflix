@@ -30,9 +30,21 @@ export interface IGetMovieDetail {
     poster_path:string,
     runtime:number,
     vote_average:number,
-    vote_count:number
+    vote_count:number,
+    original_language:string,
+    tagline:string
 }
 
+export interface ICast{
+    id: number
+    known_for_department: string
+    name: string
+    profile_path: string
+}
+
+export interface IGetCredit{
+    cast : ICast[]
+}
 
 export function getTopMovies(){
     return fetch(`${BASE_PATH}/movie/top_rated?api_key=${API_KEY}&language=en-US&page=1`).then((response) => response.json())
@@ -45,6 +57,11 @@ export function getMovies(){
 export function getMoviesDetail(id:Number){
     return fetch(`${BASE_PATH}/movie/${id}?api_key=${API_KEY}&language=en-US`).then((response) => response.json())
 }
+
+export function getCredits(id:Number){
+    return fetch(`${BASE_PATH}/movie/${id}/credits?api_key=${API_KEY}&language=en-US`).then((response) => response.json())
+}
+
 export function getTvShow(){
     return fetch(`${BASE_PATH}tv/popular?api_key=${API_KEY}&language=en-US&page=1`).then((response) => response.json())
 }

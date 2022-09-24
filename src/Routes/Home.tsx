@@ -1,6 +1,6 @@
 import { useQuery} from "react-query";
 import styled from "styled-components";
-import { getMovies, IGetMoviesResult,getTopMovies,getTvShow, getMoviesDetail, IGetMovieDetail } from "../api";
+import { getMovies, IGetMoviesResult,getTopMovies,getTvShow, getMoviesDetail, IGetMovieDetail, getCredits, IGetCredit } from "../api";
 import { makeImagePath } from "../utils";
 import { motion,AnimatePresence, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -37,7 +37,7 @@ const BigMovie = styled(motion.div)`
     left:0;
     right:0;
     border-radius: 15px;
-    overflow: hidden;
+    overflow-y: scroll;
     margin:0 auto;
 `
 
@@ -52,14 +52,31 @@ const BigTitle = styled.h3`
     padding: 10px;
     font-size: 28px;
     position: relative;
-    top: -60px;
+    top: -300px;
+    text-align: center;
 `
+const BigTagLine = styled.h6`
+    position: relative;
+    font-size: 18px;
+    color:${props => props.theme.while.lighter};
+    top: -290px;
+    text-align: center;
+`
+
 
 const BigOverview = styled.p`
     padding: 20px;
     color:${props => props.theme.while.lighter};
     position: relative;
     top: -60px;
+    div{
+        padding-top: 20px;
+        padding-bottom: 20px;
+        span{
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+    }
 `
 
 
@@ -75,6 +92,27 @@ const Category = styled.h2`
     top: -120px;
     font-size: 28px;
     padding-left: 20px;
+`
+const CastList = styled.div`
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+`
+const CastItem = styled.div`
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+`
+
+const CastImg = styled.div<{photo:string}>`
+    width: 80px;
+    height: 80px;
+    border-radius: 80px;
+    background-image: url(${(props) => props.photo});
+    background-size: 100%;
+    background-position: center;
+    margin: 0 auto;
+    margin-top: 10px;
 `
 
 const rowVariants = {
@@ -99,7 +137,17 @@ function Home(){
     const top = useQuery<IGetMoviesResult>(["movies","topMovies"],getTopMovies)
     const topList = top.data;
     
-    const detail = useQuery<IGetMovieDetail>(["movies",bigMovieMath?.params.id],() => getMoviesDetail(Number(bigMovieMath?.params.id)),{enabled:!!bigMovieMath?.params.id})
+    const detail = useQuery<IGetMovieDetail>(
+        ["movies",bigMovieMath?.params.id],
+        () => getMoviesDetail(Number(bigMovieMath?.params.id)),
+        {enabled:!!bigMovieMath?.params.id}
+    )
+    const credits = useQuery<IGetCredit>(
+        ["movies","getCredis"],
+        () => getCredits(Number(bigMovieMath?.params.id)),
+        {enabled : !!bigMovieMath?.params.id}
+    )
+    // console.log(credits.data?.cast[0]);
     // console.log(detail.data?.backdrop_path);
     const onOverlayClick = () => {
         navigate("/");
@@ -137,7 +185,27 @@ function Home(){
                                         linear-gradient(to top,black,transparent),
                                         url(${makeImagePath(detail.data?.backdrop_path || "","w500")})`}}/>
                                         <BigTitle>{detail.data?.title}</BigTitle>
-                                        <BigOverview>{detail.data?.overview}</BigOverview>
+                                        <BigTagLine>{detail.data?.tagline}</BigTagLine>
+                                        <BigOverview>
+                                            <div>
+                                                <span>러닝 타임 : {detail.data?.runtime}분</span>
+                                                <span>언어 : {detail.data?.original_language}</span>
+                                                <span>평점 : {detail.data?.vote_average}</span>
+                                            </div>
+                                            {detail.data?.overview}
+                                            <CastList>
+                                                {credits.data?.cast.map((item,index)=>(
+                                                    index < 4 ? <CastItem>
+                                                    {item.name}
+                                                    <CastImg photo={makeImagePath(item.profile_path || "","w500")}/>
+                                                </CastItem> : null
+                                                    
+                                                ))}
+                                            </CastList>
+                                            
+                                        </BigOverview>
+
+                                        
                                     </>}
                                 </BigMovie>
                              </>
