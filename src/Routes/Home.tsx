@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
 import styled from "styled-components";
-import { getMovies, IGetMoviesResult,getTopMovies } from "../api";
+import { getMovies, IGetMoviesResult,getTopMovies,getTvShow } from "../api";
 import { makeImagePath } from "../utils";
 import { motion,AnimatePresence, useScroll } from "framer-motion";
 import { useState } from "react";
@@ -97,13 +97,13 @@ function Home(){
     const {scrollY} = useScroll()
     const {data,isLoading} = useQuery<IGetMoviesResult>(["movies","nowPlaying"],getMovies);
     const top = useQuery<IGetMoviesResult>(["movies","topMovies"],getTopMovies)
-    // console.log(top);
     const topList = top.data;
-    console.log(topList);
     
+    const tv = useQuery<IGetMoviesResult>(["movies","topMovies"],getTvShow)
     const onOverlayClick = () => {
         navigate("/");
     }
+
     const clickedMovie = bigMovieMath?.params.id && data?.results.find(movie => movie.id+"" === bigMovieMath.params.id)
     return (
         <Wrapper style={{height:"200vh"}}>

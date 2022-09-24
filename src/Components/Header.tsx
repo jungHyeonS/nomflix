@@ -144,7 +144,6 @@ function Header(){
     const navigate = useNavigate()
     const {register,handleSubmit} = useForm<IForm>()
     const onValid = (data :IForm) => {
-        console.log(data);
         navigate(`/serach?keyword=${data.keyword}`)
     }
     return (

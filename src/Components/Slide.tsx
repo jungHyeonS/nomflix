@@ -48,12 +48,14 @@ const Row = styled(motion.div)`
     width: 100%;
 `
 
-const Box = styled(motion.div)<{bgPhoto:string}>`
+// 
+// 
+const Box = styled(motion.div)<{bgphoto:string}>`
     background: white;
     height: 200px;
     color:red;
     font-size: 66px;
-    background-image: url(${props => props.bgPhoto});
+    background-image: url(${(props)=>props.bgphoto});
     background-size: cover;
     background-position: center center;
     cursor: pointer;
@@ -151,8 +153,6 @@ interface IBanner{
 const offset = 6;
 
 function Slide(props : IBanner){
-    console.log("slide");
-    console.log(props.data);
 
     const navigate = useNavigate();
     const [index,setIndex] = useState(0);
@@ -182,7 +182,6 @@ function Slide(props : IBanner){
             const totalMovies = props.data.results.length;
             const maxIndex = Math.floor(totalMovies / offset) - 1;
             setIndex((prev) => prev === 0 ? maxIndex : prev-1)
-            console.log("unincrease");
         }
     }
     const onBoxClicked = (movieId:number) => {
@@ -228,13 +227,16 @@ function Slide(props : IBanner){
                         whileHover="hover"
                         transition={{type:"tween"}}
                         layoutId={movie.id + ""}
-                        bgPhoto={makeImagePath(movie.backdrop_path,"w500")}>
+                        bgphoto={makeImagePath(movie.backdrop_path,"w500")}
+                        >
                             <img/>
                             <Info variants={infoVariants}>
                                 <h4>{movie.title}</h4>
                             </Info>
                         </Box>
                     ))}
+
+{/*  */}
                 </Row>
 
             </AnimatePresence>
