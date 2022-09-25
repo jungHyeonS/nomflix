@@ -147,6 +147,7 @@ const infoVariants = {
 }
 
 interface IBanner{
+    type:string,
     data? : IGetMoviesResult
 }
 
@@ -184,8 +185,13 @@ function Slide(props : IBanner){
             setIndex((prev) => prev === 0 ? maxIndex : prev-1)
         }
     }
-    const onBoxClicked = (movieId:number) => {
-        navigate(`/movies/${movieId}`)
+    const onBoxClicked = (id:number) => {
+        if(props.type == "movie"){
+            navigate(`/movies/${id}`)
+        }else{
+            navigate(`/tv/${id}`)
+        }
+        
     }
     return (
 
@@ -231,7 +237,7 @@ function Slide(props : IBanner){
                         >
                             <img/>
                             <Info variants={infoVariants}>
-                                <h4>{movie.title}</h4>
+                                <h4>{movie?.name || movie.title}</h4>
                             </Info>
                         </Box>
                     ))}

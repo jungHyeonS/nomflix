@@ -7,6 +7,7 @@ interface IMovie{
     title:string;
     overview:string;
     id:number;
+    name?:string;
 }
 
 export interface IGetMoviesResult {
@@ -33,6 +34,7 @@ export interface IGetMovieDetail {
     vote_count:number,
     original_language:string,
     tagline:string
+    name?:string
 }
 
 export interface ICast{
@@ -54,12 +56,22 @@ export function getMovies(){
     return fetch(`${BASE_PATH}/movie/now_playing?api_key=${API_KEY}&language=en-US&page=1&region=kr`).then((response) => response.json())
 }
 
-export function getMoviesDetail(id:Number){
-    return fetch(`${BASE_PATH}/movie/${id}?api_key=${API_KEY}&language=en-US`).then((response) => response.json())
+export function getMoviesDetail(id:Number,type:string){
+    if(type == "movie"){
+        return fetch(`${BASE_PATH}/movie/${id}?api_key=${API_KEY}&language=en-US`).then((response) => response.json())
+    }else{
+        return fetch(`${BASE_PATH}/tv/${id}?api_key=${API_KEY}&language=en-US`).then((response) => response.json())
+    }
+    
 }
 
-export function getCredits(id:Number){
-    return fetch(`${BASE_PATH}/movie/${id}/credits?api_key=${API_KEY}&language=en-US`).then((response) => response.json())
+export function getCredits(id:Number,type:string){
+    if(type == "moive"){
+        return fetch(`${BASE_PATH}/movie/${id}/credits?api_key=${API_KEY}&language=en-US`).then((response) => response.json())
+    }else{
+        return fetch(`${BASE_PATH}/tv/${id}/credits?api_key=${API_KEY}&language=en-US`).then((response) => response.json())
+    }
+    
 }
 
 export function getUpComming(){
@@ -67,13 +79,21 @@ export function getUpComming(){
 }
 
 export function getTvShow(){
-    return fetch(`${BASE_PATH}tv/popular?api_key=${API_KEY}&language=en-US&page=1`).then((response) => response.json())
+    return fetch(`${BASE_PATH}/tv/popular?api_key=${API_KEY}&language=en-US&page=1`).then((response) => response.json())
 }
 
 export function getMovieVideo(id : number){
     return fetch(`${BASE_PATH}/movie/${id}/videos?api_key=${API_KEY}&language=en-US`).then((response) => response.json())
 }
 
-export function getMoveSimiar(id : number){
-    return fetch(`${BASE_PATH}/movie/${id}/similar?api_key=${API_KEY}&language=en-US&page=1`).then((response) => response.json())
+export function getMoveSimiar(id : number,type:string){
+    if(type == "moive"){
+        return fetch(`${BASE_PATH}/movie/${id}/similar?api_key=${API_KEY}&language=en-US&page=1`).then((response) => response.json())
+    }else{
+        return fetch(`${BASE_PATH}/tv/${id}/similar?api_key=${API_KEY}&language=en-US&page=1`).then((response) => response.json())
+    }
+}
+
+export function getTopTv(){
+    return fetch(`${BASE_PATH}/tv/top_rated?api_key=${API_KEY}&language=en-US&page=1`).then((response) => response.json())
 }

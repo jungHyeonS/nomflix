@@ -138,83 +138,98 @@ const rowVariants = {
     })
 }
 
-function OverlayVideo(props : any){
+interface IProps{
+    type?:string,
+    bigMovieMath:any
+}
+
+function OverlayVideo(props : IProps){
     const navigate = useNavigate();
     const {scrollY} = useScroll()
     const detail = useQuery<IGetMovieDetail>(
         ["movies",props.bigMovieMath?.params.id],
-        () => getMoviesDetail(Number(props.bigMovieMath?.params.id)),
+        () => getMoviesDetail(Number(props.bigMovieMath?.params.id),props.type || ""),
         {enabled:!!props.bigMovieMath?.params.id}
     )
     const credits = useQuery<IGetCredit>(
         ["movies","getCredis"],
-        () => getCredits(Number(props.bigMovieMath?.params.id)),
+        () => getCredits(Number(props.bigMovieMath?.params.id),props.type || ""),
         {enabled : !!props.bigMovieMath?.params.id}
     )
 
     const slimiar = useQuery<IGetMoviesResult>(
         ["movies","getSlimiar"],
-        () => getMoveSimiar(Number(props.bigMovieMath?.params.id)),
+        () => getMoveSimiar(Number(props.bigMovieMath?.params.id),props.type || ""),
         {enabled : !!props.bigMovieMath?.params.id}
     )
 
 
     const onOverlayClick = () => {
-        navigate("/");
+        if(props.type == "tv"){
+            navigate("/tv");
+        }else{
+            navigate("/");
+        }
+        
     }
     const onSlimarClick = (movieId:number) => {
-        navigate(`/movies/${movieId}`)
+        if(props.type == "tv"){
+            navigate(`/tv/${movieId}`)
+        }else{
+            navigate(`/movies/${movieId}`)
+        }
+        
     }
 
     return (
         <>
             {props.bigMovieMath ? (
-                             <>
-                                <Overlay onClick={onOverlayClick} exit={{opacity:0}} animate={{opacity:1}}/>
-                                <BigMovie 
-                                layoutId={props.bigMovieMath.params.id}
-                                style={{
-                                    top:scrollY.get() + 100
-                                }}>
-                                    {props.bigMovieMath?.params.id && 
-                                    <>
-                                        <BigCover style={{backgroundImage : `
-                                        linear-gradient(to top,black,transparent),
-                                        url(${makeImagePath(detail.data?.backdrop_path || "","w500")})`}}/>
-                                        <BigTitle>{detail.data?.title}</BigTitle>
-                                        <BigTagLine>{detail.data?.tagline}</BigTagLine>
-                                        <BigOverview>
-                                            <div>
-                                                <span>러닝 타임 : {detail.data?.runtime}분</span>
-                                                <span>언어 : {detail.data?.original_language}</span>
-                                                <span>평점 : {detail.data?.vote_average}</span>
-                                            </div>
-                                            {detail.data?.overview}
-                                            <CastList>
-                                                {credits.data?.cast.map((item,index)=>(
-                                                    index < 4 ? <CastItem key={index + "cast"}>
-                                                    {item.name}
-                                                    <CastImg photo={makeImagePath(item.profile_path || "","w500")}/>
-                                                </CastItem> : null
-                                                    
-                                                ))}
-                                            </CastList>
-                                            <SlimiarList>
-                                                {slimiar.data?.results.map((item,index)=>(
-                                                    <SlimiarItem key={index+"slimiar"} photo={makeImagePath(item.backdrop_path || "")} onClick={() => onSlimarClick(item.id)}>
-                                                        <SlimiarCover>
-                                                            <p>{item.title}</p>
-                                                        </SlimiarCover>
-                                                    </SlimiarItem>
-                                                ))}
-                                            </SlimiarList>
-                                        </BigOverview>
+                <>
+                <Overlay onClick={onOverlayClick} exit={{opacity:0}} animate={{opacity:1}}/>
+                <BigMovie 
+                layoutId={props.bigMovieMath.params.id}
+                style={{
+                    top:scrollY.get() + 100
+                }}>
+                    {props.bigMovieMath?.params.id && 
+                    <>
+                        <BigCover style={{backgroundImage : `
+                        linear-gradient(to top,black,transparent),
+                        url(${makeImagePath(detail.data?.backdrop_path || "","w500")})`}}/>
+                        <BigTitle>{detail.data?.name || detail.data?.title}</BigTitle>
+                        <BigTagLine>{detail.data?.tagline}</BigTagLine>
+                        <BigOverview>
+                            <div>
+                                <span>러닝 타임 : {detail.data?.runtime}분</span>
+                                <span>언어 : {detail.data?.original_language}</span>
+                                <span>평점 : {detail.data?.vote_average}</span>
+                            </div>
+                            {detail.data?.overview}
+                            <CastList>
+                                {credits.data?.cast.map((item,index)=>(
+                                    index < 4 ? <CastItem key={index + "cast"}>
+                                    {item.name}
+                                    <CastImg photo={makeImagePath(item.profile_path || "","w500")}/>
+                                </CastItem> : null
+                                    
+                                ))}
+                            </CastList>
+                            <SlimiarList>
+                                {slimiar.data?.results.map((item,index)=>(
+                                    <SlimiarItem key={index+"slimiar"} photo={makeImagePath(item.backdrop_path || "")} onClick={() => onSlimarClick(item.id)}>
+                                        <SlimiarCover>
+                                            <p>{item.name || item.title}</p>
+                                        </SlimiarCover>
+                                    </SlimiarItem>
+                                ))}
+                            </SlimiarList>
+                        </BigOverview>
 
-                                        
-                                    </>}
-                                </BigMovie>
-                             </>
-                           ) : null}
+                        
+                    </>}
+                </BigMovie>
+                </>
+            ) : null}
         </>
 
     );

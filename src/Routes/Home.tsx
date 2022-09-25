@@ -57,23 +57,23 @@ function Home(){
                     <Banner data={data}></Banner>
                     <MovieList>
                         <Category>Top Movies</Category>
-                        <Slide data={topList}></Slide>
+                        <Slide data={topList} type="movie"></Slide>
                     </MovieList>
 
                     <MovieList>
                         <Category>Movies</Category>
-                        <Slide data={data}></Slide>
+                        <Slide data={data} type="moive"></Slide>
                     </MovieList>
 
                     <MovieList>
                         <Category>Up Comming</Category>
-                        <Slide data={upList}></Slide>
+                        <Slide data={upList} type="movie"></Slide>
                     </MovieList>
                     
                     {/* <Slide data={data}></Slide> */}
                     <AnimatePresence>
 
-                            <OverlayVideo bigMovieMath={bigMovieMath}></OverlayVideo>
+                            <OverlayVideo bigMovieMath={bigMovieMath} type="movie"></OverlayVideo>
                            
                     </AnimatePresence>
                 </>
