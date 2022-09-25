@@ -117,6 +117,41 @@ const CastImg = styled.div<{photo:string}>`
     margin-top: 10px;
 `
 
+const SlimiarList = styled.div`
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+`
+
+const SlimiarItem = styled.div<{photo:string}>`
+    width: 260px;
+    height: 80px;
+    border-radius: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-image: url(${(props) => props.photo});
+    background-size: 100%;
+    background-position: center;
+    position: relative;
+    cursor: pointer;
+`
+
+const SlimiarCover = styled.div`
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+`
+
 const rowVariants = {
     hidden : (back:boolean) => ({
         x : back ? -window.outerWidth - 5 :window.outerWidth+ 5
@@ -152,16 +187,20 @@ function Home(){
         {enabled : !!bigMovieMath?.params.id}
     )
 
-    const slimiar = useQuery(
+    const slimiar = useQuery<IGetMoviesResult>(
         ["movies","getSlimiar"],
         () => getMoveSimiar(Number(bigMovieMath?.params.id)),
         {enabled : !!bigMovieMath?.params.id}
     )
-    console.log(slimiar)
+
 
     const onOverlayClick = () => {
         navigate("/");
     }
+    const onSlimarClick = (movieId:number) => {
+        navigate(`/movies/${movieId}`)
+    }
+
     // const clickedMovie = bigMovieMath?.params.id && data?.results.find(movie => movie.id+"" === bigMovieMath.params.id)
     return (
         <Wrapper style={{height:"200vh"}}>
@@ -217,7 +256,15 @@ function Home(){
                                                     
                                                 ))}
                                             </CastList>
-                                            
+                                            <SlimiarList>
+                                                {slimiar.data?.results.map((item,index)=>(
+                                                    <SlimiarItem key={index} photo={makeImagePath(item.backdrop_path || "")} onClick={() => onSlimarClick(item.id)}>
+                                                        <SlimiarCover>
+                                                            <p>{item.title}</p>
+                                                        </SlimiarCover>
+                                                    </SlimiarItem>
+                                                ))}
+                                            </SlimiarList>
                                         </BigOverview>
 
                                         

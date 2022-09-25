@@ -49,8 +49,6 @@ interface IBanner{
 }
 
 function Banner(props : IBanner){
-    console.log("bananer");
-    console.log(props.data?.results[0].id)
     const opts = {
         height: 700,
         width: window.outerWidth,
